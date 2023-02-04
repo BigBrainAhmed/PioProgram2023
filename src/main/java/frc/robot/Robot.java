@@ -11,6 +11,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
 
 /**
  * This is a sample program to demonstrate how to use a gyro sensor to make a robot drive straight.
@@ -20,25 +24,13 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 
  
 public class Robot extends TimedRobot {
-  private static final double kAngleSetpoint = 0.0;
-  private static final double kP = 0.005; // propotional turning constant
 
-  // gyro calibration constant, may need to be adjusted;
-  // gyro value of 360 is set to correspond to one full revolution
-  private static final double kVoltsPerDegreePerSecond = 0.0128;
-
-  
-  private static final int kGyroPort = 0;
-  private static final int kJoystickPort = 0;
-
-  
-  
-  private final AnalogGyro m_gyro = new AnalogGyro(kGyroPort);
-  private final Joystick m_joystick = new Joystick(kJoystickPort);
+  private ADIS16470_IMU imu = new ADIS16470_IMU();
+  private final Joystick m_joystick = new Joystick(0);
 
   @Override
   public void robotInit() {
-    m_gyro.setSensitivity(kVoltsPerDegreePerSecond);
+
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
@@ -50,6 +42,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    System.out.println(m_gyro.getAngle());
+    System.out.println(imu.getAngle());
   }
 }
