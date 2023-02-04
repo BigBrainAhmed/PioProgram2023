@@ -25,7 +25,7 @@ public class Robot extends TimedRobot {
 
   // gyro calibration constant, may need to be adjusted;
   // gyro value of 360 is set to correspond to one full revolution
-  private static final double kVoltsPerDegreePerSecond = 0.0128;
+  // private static final double kVoltsPerDegreePerSecond = 0.0128;
 
   
   private static final int kGyroPort = 0;
@@ -38,7 +38,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    m_gyro.setSensitivity(kVoltsPerDegreePerSecond);
+    // m_gyro.setSensitivity(kVoltsPerDegreePerSecond);
     m_gyro.calibrate();
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
