@@ -39,6 +39,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_gyro.setSensitivity(kVoltsPerDegreePerSecond);
+    m_gyro.calibrate();
     // We need to invert one side of the drivetrain so that positive voltages
     // result in both sides moving forward. Depending on how your robot's
     // gearbox is constructed, you might have to invert the left side instead.
@@ -48,8 +49,10 @@ public class Robot extends TimedRobot {
    * The motor speed is set from the joystick while the DifferentialDrive turning value is assigned
    * from the error between the setpoint and the gyro angle.
    */
+
   @Override
   public void teleopPeriodic() {
-    System.out.println(m_gyro.getAngle());
+    // System.out.println(m_gyro.getAngle());
+    System.out.println(Rotation2d.fromDegrees(-m_gyro.getAngle()));
   }
 }
