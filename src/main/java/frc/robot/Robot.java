@@ -66,10 +66,20 @@ private final XboxController x_stick = new XboxController(1);
 
     System.out.println(imu.getAngle());
 
-
+//previous code
     SmartDashboard.putNumber("Angle", imu.getAngle());
     SmartDashboard.putNumber("AccelX", imu.getAccelX());
     SmartDashboard.putNumber("AccelY", imu.getAccelY());
     SmartDashboard.putNumber("AccelZ", imu.getAccelZ());
+//.
+    SmartDashboard.putBoolean("Bridge Limit", bridgeTipper.atBridge());
+    SmartDashboard.putNumber("Bridge Angle", bridgeTipper.getPosition());
+    SmartDashboard.putNumber("Swerve Angle", drivetrain.getSwerveAngle());
+    SmartDashboard.putNumber("Left Drive Encoder", drivetrain.getLeftEncoder());
+    SmartDashboard.putNumber("Right Drive Encoder", dri vetrain.getRightEncoder());
+    SmartDashboard.putNumber("Turret Pot", turret.getCurrentAngle());
+    SmartDashboard.putNumber("Turret Pot Voltage", turret.getAverageVoltage());
+    SmartDashboard.putNumber("RPM", shooter.getRPM());
+
   }
 }
