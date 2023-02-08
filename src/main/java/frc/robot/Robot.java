@@ -1,80 +1,90 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
-import edu.wpi.first.wpilibj.AnalogGyro;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.networktables.NetworkTableEntry;
+
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
-/**
- * This is a sample program to demonstrate how to use a gyro sensor to make a robot drive straight.
- * This program uses a joystick to drive forwards and backwards while the gyro is used for direction
- * keeping.
- */
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.XboxController;
 
+import com.revrobotics.CANSparkMax;
+
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.wpilibj.GenericHID;
  
 public class Robot extends TimedRobot {
 
-  private ADIS16470_IMU imu = new ADIS16470_IMU();
-  private final Joystick m_joystick = new Joystick(0);
+private static final int rightMotor0ID = 1;
+private static final int rightMotor1ID = 2;
+private static final int leftMotor0ID = 3;
+private static final int leftMotor1ID = 4;
 
-  private GenericEntry m_maxSpeed;
-  private NetworkTableEntry shuffle_angle;
+
+
+
+private CANSparkMax leftMotor0;
+private CANSparkMax leftMotor1;
+private CANSparkMax rightMotor0;
+private CANSparkMax rightMotor1;
+
+private DifferentialDrive m_robotDrive;
+
+private Timer elapsedTime = new Timer();
+
+private ADIS16470_IMU imu = new ADIS16470_IMU();
+private final Joystick m_stick = new Joystick(0);
+private final XboxController x_stick = new XboxController(1);
+
+
   
 
   @Override
   public void robotInit(){
+  leftMotor0 = new CANSparkMax(leftMotor0ID, MotorType.kBrushless);
+  leftMotor1 = new CANSparkMax(leftMotor1ID, MotorType.kBrushless);
+  rightMotor0 = new CANSparkMax(rightMotor0ID, MotorType.kBrushless);
+  rightMotor1 = new CANSparkMax(rightMotor1ID, MotorType.kBrushless);
+
+  leftMotor0.setInverted(true);
+
+
+  m_robotDrive = new DifferentialDrive(leftMotor0, rightMotor0);
+
     imu.calibrate();
-
-
-    // Add the tank drive and encoders to a 'Drivebase' tab
-
-    /*// Put both encoders in a list layout
-    ShuffleboardLayout encoders =
-        driveBaseTab.getLayout("List Layout", "Encoders").withPosition(0, 0).withSize(2, 2);
-    encoders.add("Left Encoder", m_leftEncoder);
-    encoders.add("Right Encoder", m_rightEncoder);
-
-    // Add the elevator motor and potentiometer to an 'Elevator' tab
-    ShuffleboardTab elevatorTab = Shuffleboard.getTab("Elevator");
-    elevatorTab.add("Motor", m_elevatorMotor);
-    elevatorTab.add("Potentiometer", m_elevatorPot);
-
-    // We need to invert one side of the drivetrain so that positive voltages
-    // result in both sides moving forward. Depending on how your robot's
-    // gearbox is constructed, you might have to invert the left side instead.
-    */
+    elapsedTime.reset();
+    elapsedTime.start();
   }
 
-  /**
-   * The motor speed is set from the joystick while the DifferentialDrive turning value is assigned
-   * from the error between the setpoint and the gyro angle.
-   */
   @Override
   public void teleopPeriodic() {
+
+    m_robotDrive.arcadeDrive(x_stick.getLeftY() * 0.5, x_stick.getRightX());
+
     System.out.println(imu.getAngle());
+<<<<<<< HEAD
     SmartDashboard.putNumber("X angle", imu.getAngle());
     SmartDashboard.putNumber("X Angle", imu.g(getGyroInstantZ());
+=======
+
+//previous code
+    SmartDashboard.putNumber("Angle", imu.getAngle());
+    SmartDashboard.putNumber("AccelX", imu.getAccelX());
+    SmartDashboard.putNumber("AccelY", imu.getAccelY());
+    SmartDashboard.putNumber("AccelZ", imu.getAccelZ());
+//.
+    SmartDashboard.putBoolean("Bridge Limit", bridgeTipper.atBridge());
+    SmartDashboard.putNumber("Bridge Angle", bridgeTipper.getPosition());
+    SmartDashboard.putNumber("Swerve Angle", drivetrain.getSwerveAngle());
+    SmartDashboard.putNumber("Left Drive Encoder", drivetrain.getLeftEncoder());
+    SmartDashboard.putNumber("Right Drive Encoder", dri vetrain.getRightEncoder());
+    SmartDashboard.putNumber("Turret Pot", turret.getCurrentAngle());
+    SmartDashboard.putNumber("Turret Pot Voltage", turret.getAverageVoltage());
+    SmartDashboard.putNumber("RPM", shooter.getRPM());
+
+>>>>>>> 2a280f3f8c4e61467dfdf3135f71e03dacba8252
   }
 }
