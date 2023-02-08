@@ -74,6 +74,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     System.out.println(imu.getAngle());
-    SmartDashboard.putNumber("Bridge Angle", imu.getAngle());
+    SmartDashboard.putNumber("X angle", imu.getAngle());
+    SmartDashboard.putNumber("X Angle", imu.g(getGyroInstantZ());
   }
 }
