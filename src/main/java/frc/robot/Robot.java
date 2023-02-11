@@ -15,7 +15,18 @@ import com.revrobotics.CANSparkMax;
 
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.GenericHID;
- 
+import edu.wpi.first.cameraserver.CameraServer;
+
+import edu.wpi.first.hal.FRCNetComm.tResourceType;
+import edu.wpi.first.hal.HAL;
+import edu.wpi.first.hal.SimBoolean;
+import edu.wpi.first.hal.SimDevice;
+import edu.wpi.first.hal.SimDouble;
+import edu.wpi.first.networktables.NTSendable;
+import edu.wpi.first.networktables.NTSendableBuilder;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 public class Robot extends TimedRobot {
 
 private static final int rightMotor0ID = 1;
@@ -44,6 +55,8 @@ private final XboxController x_stick = new XboxController(1);
 
   @Override
   public void robotInit(){
+    CameraServer.startAutomaticCapture();
+
   leftMotor0 = new CANSparkMax(leftMotor0ID, MotorType.kBrushless);
   leftMotor1 = new CANSparkMax(leftMotor1ID, MotorType.kBrushless);
   rightMotor0 = new CANSparkMax(rightMotor0ID, MotorType.kBrushless);
@@ -62,29 +75,25 @@ private final XboxController x_stick = new XboxController(1);
   @Override
   public void teleopPeriodic() {
 
-    m_robotDrive.arcadeDrive(x_stick.getLeftY() * 0.5, x_stick.getRightX());
+    m_robotDrive.arcadeDrive( -m_stick.getY(),m_stick.getX() );
 
-    System.out.println(imu.getAngle());
-<<<<<<< HEAD
-    SmartDashboard.putNumber("X angle", imu.getAngle());
-    SmartDashboard.putNumber("X Angle", imu.g(getGyroInstantZ());
-=======
 
-//previous code
-    SmartDashboard.putNumber("Angle", imu.getAngle());
-    SmartDashboard.putNumber("AccelX", imu.getAccelX());
-    SmartDashboard.putNumber("AccelY", imu.getAccelY());
-    SmartDashboard.putNumber("AccelZ", imu.getAccelZ());
-//.
-    SmartDashboard.putBoolean("Bridge Limit", bridgeTipper.atBridge());
-    SmartDashboard.putNumber("Bridge Angle", bridgeTipper.getPosition());
-    SmartDashboard.putNumber("Swerve Angle", drivetrain.getSwerveAngle());
-    SmartDashboard.putNumber("Left Drive Encoder", drivetrain.getLeftEncoder());
-    SmartDashboard.putNumber("Right Drive Encoder", dri vetrain.getRightEncoder());
-    SmartDashboard.putNumber("Turret Pot", turret.getCurrentAngle());
-    SmartDashboard.putNumber("Turret Pot Voltage", turret.getAverageVoltage());
-    SmartDashboard.putNumber("RPM", shooter.getRPM());
+    SmartDashboard.putNumber("getAngle", imu.getAngle() % 360.0);
+    SmartDashboard.putNumber("getAccelX", imu.getAccelX());
+    SmartDashboard.putNumber("getAccelY", imu.getAccelY());
+    SmartDashboard.putNumber("getAccelZ", imu.getAccelZ());
+    SmartDashboard.putNumber("getRate", imu.getRate());
+    SmartDashboard.putNumber("getXComplementaryAngle", imu.getXComplementaryAngle());
+    SmartDashboard.putNumber("getYComplementaryAngle", imu.getYComplementaryAngle());
+    SmartDashboard.putNumber("getPort", imu.getPort());
 
->>>>>>> 2a280f3f8c4e61467dfdf3135f71e03dacba8252
+
   }
+
+  public void autonomousInit(){
+    while(imu.getAngle() < 180){
+      m_robotDrive.arcadeDrive(0.2, 1);
+    }
+  }
+
 }
