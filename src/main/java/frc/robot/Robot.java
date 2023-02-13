@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
+//import edu.wpi.first.wpilibj.ADIS16470_IMU;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
@@ -78,14 +78,9 @@ private final XboxController x_stick = new XboxController(1);
     m_robotDrive.arcadeDrive( -m_stick.getY(),m_stick.getX() );
 
 
-    SmartDashboard.putNumber("getAngle", imu.getAngle() % 360.0);
-    SmartDashboard.putNumber("getAccelX", imu.getAccelX());
-    SmartDashboard.putNumber("getAccelY", imu.getAccelY());
-    SmartDashboard.putNumber("getAccelZ", imu.getAccelZ());
-    SmartDashboard.putNumber("getRate", imu.getRate());
-    SmartDashboard.putNumber("getXComplementaryAngle", imu.getXComplementaryAngle());
-    SmartDashboard.putNumber("getYComplementaryAngle", imu.getYComplementaryAngle());
-    SmartDashboard.putNumber("getPort", imu.getPort());
+    System.out.println(imu.getPitchAxis());
+    System.out.println(imu.getRollAxis());
+    System.out.println(imu.getYawAxis());
 
 
   }
