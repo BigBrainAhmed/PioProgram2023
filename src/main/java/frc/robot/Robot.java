@@ -3,29 +3,13 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
-//import edu.wpi.first.wpilibj.ADIS16470_IMU;
-
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.XboxController;
-
 import com.revrobotics.CANSparkMax;
-
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.cameraserver.CameraServer;
-
-import edu.wpi.first.hal.FRCNetComm.tResourceType;
-import edu.wpi.first.hal.HAL;
-import edu.wpi.first.hal.SimBoolean;
-import edu.wpi.first.hal.SimDevice;
-import edu.wpi.first.hal.SimDouble;
-import edu.wpi.first.networktables.NTSendable;
-import edu.wpi.first.networktables.NTSendableBuilder;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.motorcontrol.*;
 
 public class Robot extends TimedRobot {
 
@@ -34,13 +18,16 @@ private static final int rightMotor1ID = 2;
 private static final int leftMotor0ID = 3;
 private static final int leftMotor1ID = 4;
 
-
-
+PIDController pid = new PIDController(0.005, 0, 0);
 
 private CANSparkMax leftMotor0;
 private CANSparkMax leftMotor1;
 private CANSparkMax rightMotor0;
 private CANSparkMax rightMotor1;
+
+private double spinValue;
+
+
 
 private DifferentialDrive m_robotDrive;
 
@@ -48,7 +35,6 @@ private Timer elapsedTime = new Timer();
 
 private ADIS16470_IMU imu = new ADIS16470_IMU();
 private final Joystick m_stick = new Joystick(0);
-private final XboxController x_stick = new XboxController(1);
 
 
   
@@ -62,33 +48,53 @@ private final XboxController x_stick = new XboxController(1);
   rightMotor0 = new CANSparkMax(rightMotor0ID, MotorType.kBrushless);
   rightMotor1 = new CANSparkMax(rightMotor1ID, MotorType.kBrushless);
 
-  leftMotor0.setInverted(true);
+  MotorControllerGroup leftMotors = new MotorControllerGroup(leftMotor0, leftMotor1);
+  MotorControllerGroup rightMotors = new MotorControllerGroup(rightMotor0, rightMotor1);
+
+  leftMotors.setInverted(true);
+  
 
 
-  m_robotDrive = new DifferentialDrive(leftMotor0, rightMotor0);
+  m_robotDrive = new DifferentialDrive(leftMotors, rightMotors);
 
     imu.calibrate();
     elapsedTime.reset();
     elapsedTime.start();
+
   }
 
   @Override
   public void teleopPeriodic() {
 
-    m_robotDrive.arcadeDrive( -m_stick.getY(),m_stick.getX() );
+    m_robotDrive.arcadeDrive( -m_stick.getY(), m_stick.getX() );
 
-
-    System.out.println(imu.getPitchAxis());
-    System.out.println(imu.getRollAxis());
-    System.out.println(imu.getYawAxis());
+    SmartDashboard.putNumber("Pitch Axis", imu.getAngle(imu.getPitchAxis()));
+    SmartDashboard.putNumber("Roll Axis", imu.getAngle(imu.getRollAxis()));
+    SmartDashboard.putNumber("Yaw Axis", imu.getAngle(imu.getYawAxis()));
+    SmartDashboard.putNumber("Calculated speed", pid.calculate(imu.getAngle(imu.getYawAxis()), 180));
+    SmartDashboard.putNumber("Y Axis", -m_stick.getY());
+    SmartDashboard.putNumber("X Axis", m_stick.getX());
 
 
   }
 
-  public void autonomousInit(){
-    while(imu.getAngle() < 180){
-      m_robotDrive.arcadeDrive(0.2, 1);
+  public void autonomousPeriodic(){
+    spinValue = pid.calculate(imu.getAngle(imu.getYawAxis()), 180);
+
+    if(spinValue > 1){
+      spinValue = 0.7;
     }
+
+    m_robotDrive.arcadeDrive(0, spinValue);
+
+    SmartDashboard.putNumber("Pitch Axis", imu.getAngle(imu.getPitchAxis()));
+    SmartDashboard.putNumber("Roll Axis", imu.getAngle(imu.getRollAxis()));
+    SmartDashboard.putNumber("Yaw Axis", imu.getAngle(imu.getYawAxis()));
+    SmartDashboard.putNumber("Calculated speed", pid.calculate(imu.getAngle(imu.getYawAxis()), 180));
+    SmartDashboard.putNumber("Y Axis", -m_stick.getY());
+    SmartDashboard.putNumber("X Axis", m_stick.getX());
   }
+
+  
 
 }
