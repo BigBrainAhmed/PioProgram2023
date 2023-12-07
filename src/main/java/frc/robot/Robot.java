@@ -13,7 +13,11 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.io.File;
 import java.io.IOException;
 import swervelib.parser.SwerveParser;
-
+import edu.wpi.first.wpilibj.MotorSafety;
+import edu.wpi.first.wpilibj.motorcontrol.PWMMotorController;
+import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.TimedRobot;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
  * described in the TimedRobot documentation. If you change the name of this class or the package after creating this
@@ -21,6 +25,8 @@ import swervelib.parser.SwerveParser;
  */
 public class Robot extends TimedRobot
 {
+  private PWMTalonSRX motor;
+  private Joystick joystick;
 
   private static Robot   instance;
   private        Command m_autonomousCommand;
@@ -45,7 +51,7 @@ public class Robot extends TimedRobot
   @Override
   public void robotInit()
   {
-    PathPlannerServer.startServer(5811);
+    PathPlannerServer.startServer(8771);
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
@@ -53,6 +59,8 @@ public class Robot extends TimedRobot
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
+    motor = new PWMTalonSRX(0); // Initialize the motor on PWM port 0
+    joystick = new Joystick(1);
   }
 
   /**
@@ -70,8 +78,10 @@ public class Robot extends TimedRobot
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    double speed = joystick.getY(); // Get the Y-axis value from the joystick
+    motor.set(speed);
   }
-
+//Matteo is the robotics captian and he is the best in the world and anyone who disagrees is wrong
   /**
    * This function is called once each time the robot enters Disabled mode.
    */
