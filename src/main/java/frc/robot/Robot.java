@@ -12,12 +12,16 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.io.File;
 import java.io.IOException;
+
+import javax.lang.model.util.ElementScanner14;
+
 import swervelib.parser.SwerveParser;
 import edu.wpi.first.wpilibj.MotorSafety;
 import edu.wpi.first.wpilibj.motorcontrol.PWMMotorController;
 import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.XboxController;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
  * described in the TimedRobot documentation. If you change the name of this class or the package after creating this
@@ -25,8 +29,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
  */
 public class Robot extends TimedRobot
 {
-  private PWMTalonSRX motor;
-  private Joystick joystick;
+  private PWMTalonSRX raiserMotor;
+  private PWMTalonSRX shooterMotor;
 
   private static Robot   instance;
   private        Command m_autonomousCommand;
@@ -34,6 +38,8 @@ public class Robot extends TimedRobot
   private RobotContainer m_robotContainer;
 
   private Timer disabledTimer;
+  public XboxController shooterController;
+  private Timer shooterTimer;
 
   public Robot()
   {
@@ -59,8 +65,10 @@ public class Robot extends TimedRobot
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
-    motor = new PWMTalonSRX(0); // Initialize the motor on PWM port 0
-    joystick = new Joystick(1);
+    shooterTimer = new Timer();
+    raiserMotor = new PWMTalonSRX(0); // Initialize the motor on PWM port 0
+    shooterMotor = new PWMTalonSRX(1);
+    shooterController = new XboxController(2);
   }
 
   /**
@@ -73,13 +81,32 @@ public class Robot extends TimedRobot
   @Override
   public void robotPeriodic()
   {
+    
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    double speed = joystick.getY(); // Get the Y-axis value from the joystick
-    motor.set(speed);
+    if ((Math.abs(shooterController.getRightY())) > 0.05){
+      raiserMotor.set(shooterController.getRightY());
+    } else {
+      raiserMotor.set(0);
+    }
+
+    if (shooterController.getAButton()){
+      shooterTimer.start();
+      if(shooterTimer.get() < 3){
+        shooterMotor.set(-1);
+      } else if (shooterTimer.get() < 6){
+        shooterMotor.set(1);
+      } else {
+        shooterMotor.set(0);
+        shooterTimer.reset();
+      }
+    } else {
+      shooterMotor.set(0);
+      shooterTimer.reset();
+    }
   }
 //Matteo is the robotics captian and he is the best in the world and anyone who disagrees is wrong
   /**
