@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.PS4Controller;
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
  * described in the TimedRobot documentation. If you change the name of this class or the package after creating this
@@ -29,8 +30,6 @@ import edu.wpi.first.wpilibj.XboxController;
  */
 public class Robot extends TimedRobot
 {
-  private PWMTalonSRX raiserMotor;
-  private PWMTalonSRX shooterMotor;
 
   private static Robot   instance;
   private        Command m_autonomousCommand;
@@ -39,7 +38,7 @@ public class Robot extends TimedRobot
 
   private Timer disabledTimer;
   public XboxController shooterController;
-  private Timer shooterTimer;
+  public PS4Controller controller;
 
   public Robot()
   {
@@ -58,6 +57,7 @@ public class Robot extends TimedRobot
   public void robotInit()
   {
     PathPlannerServer.startServer(8771);
+    
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
@@ -65,10 +65,7 @@ public class Robot extends TimedRobot
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
-    shooterTimer = new Timer();
-    raiserMotor = new PWMTalonSRX(0); // Initialize the motor on PWM port 0
-    shooterMotor = new PWMTalonSRX(1);
-    shooterController = new XboxController(2);
+    controller = new PS4Controller(0);
   }
 
   /**
@@ -87,26 +84,8 @@ public class Robot extends TimedRobot
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    if ((Math.abs(shooterController.getRightY())) > 0.05){
-      raiserMotor.set(shooterController.getRightY());
-    } else {
-      raiserMotor.set(0);
-    }
 
-    if (shooterController.getAButton()){
-      shooterTimer.start();
-      if(shooterTimer.get() < 3){
-        shooterMotor.set(-1);
-      } else if (shooterTimer.get() < 6){
-        shooterMotor.set(1);
-      } else {
-        shooterMotor.set(0);
-        shooterTimer.reset();
-      }
-    } else {
-      shooterMotor.set(0);
-      shooterTimer.reset();
-    }
+   
   }
 //Matteo is the robotics captian and he is the best in the world and anyone who disagrees is wrong
   /**

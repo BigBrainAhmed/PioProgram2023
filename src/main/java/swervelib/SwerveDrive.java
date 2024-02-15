@@ -146,12 +146,12 @@ public class SwerveDrive
    * @param maxSpeedMPS      Maximum speed in meters per second, remember to use {@link Units#feetToMeters(double)} if
    *                         you have feet per second!
    */
-  public SwerveDrive(
-      SwerveDriveConfiguration config, SwerveControllerConfiguration controllerConfig, double maxSpeedMPS)
+  public SwerveDrive(SwerveDriveConfiguration config, SwerveControllerConfiguration controllerConfig, double maxSpeedMPS,double angularVelocity)
   {
     this.maxSpeedMPS = maxSpeedMPS;
     swerveDriveConfiguration = config;
     swerveController = new SwerveController(controllerConfig);
+    swerveController.setMaximumAngularVelocity(angularVelocity);
     // Create Kinematics from swerve module locations.
     kinematics = new SwerveDriveKinematics(config.moduleLocationsMeters);
     odometryThread = new Notifier(this::updateOdometry);

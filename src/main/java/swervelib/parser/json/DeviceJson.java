@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.SerialPort.Port;
 import swervelib.encoders.AnalogAbsoluteEncoderSwerve;
 import swervelib.encoders.SparkMaxEncoderSwerve;
 import swervelib.encoders.SwerveAbsoluteEncoder;
+import swervelib.imu.ADIS16470Swerve;
 import swervelib.imu.NavXSwerve;
 import swervelib.imu.SwerveIMU;
 import swervelib.motors.SparkMaxSwerve;
@@ -74,7 +75,8 @@ public class DeviceJson
     }
     switch (type)
     {
-
+      case "adis16470":
+        return new ADIS16470Swerve();
       case "navx_spi":
         return new NavXSwerve(SPI.Port.kMXP);
       case "navx_i2c":

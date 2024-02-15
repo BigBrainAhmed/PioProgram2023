@@ -95,9 +95,11 @@
     {
       "guid": "Keyboard0"
     },
-    {},
     {
-      "useGamepad": true
+      "guid": "Keyboard1"
+    },
+    {
+      "guid": "Keyboard2"
     }
   ]
 }
