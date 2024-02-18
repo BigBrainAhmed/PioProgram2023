@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.server.PathPlannerServer;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -12,17 +11,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import java.io.File;
 import java.io.IOException;
-
-import javax.lang.model.util.ElementScanner14;
-
 import swervelib.parser.SwerveParser;
-import edu.wpi.first.wpilibj.MotorSafety;
-import edu.wpi.first.wpilibj.motorcontrol.PWMMotorController;
-import edu.wpi.first.wpilibj.motorcontrol.PWMTalonSRX;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.PS4Controller;
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
  * described in the TimedRobot documentation. If you change the name of this class or the package after creating this
@@ -37,8 +27,6 @@ public class Robot extends TimedRobot
   private RobotContainer m_robotContainer;
 
   private Timer disabledTimer;
-  public XboxController shooterController;
-  public PS4Controller controller;
 
   public Robot()
   {
@@ -56,8 +44,6 @@ public class Robot extends TimedRobot
   @Override
   public void robotInit()
   {
-    PathPlannerServer.startServer(8771);
-    
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
@@ -65,7 +51,6 @@ public class Robot extends TimedRobot
     // Create a timer to disable motor brake a few seconds after disable.  This will let the robot stop
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
-    controller = new PS4Controller(0);
   }
 
   /**
@@ -78,16 +63,13 @@ public class Robot extends TimedRobot
   @Override
   public void robotPeriodic()
   {
-    
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-
-   
   }
-//Matteo is the robotics captian and he is the best in the world and anyone who disagrees is wrong
+
   /**
    * This function is called once each time the robot enters Disabled mode.
    */
@@ -102,7 +84,7 @@ public class Robot extends TimedRobot
   @Override
   public void disabledPeriodic()
   {
-    if (disabledTimer.hasElapsed(Constants.Drivebase.WHEEL_LOCK_TIME))
+    if (disabledTimer.hasElapsed(Constants.DrivebaseConstants.WHEEL_LOCK_TIME))
     {
       m_robotContainer.setMotorBrake(false);
       disabledTimer.stop();
